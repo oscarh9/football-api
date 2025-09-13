@@ -1,0 +1,54 @@
+@startuml
+
+class Club {
+    +Long id
+    +String name
+    +LocalDate establishedDate
+    +String stadiumName
+    +String city
+    +League league
+    +int titlesWon
+}
+
+class Player {
+    +Long id
+    +String name
+    +Position position
+    +int jerseyNumber
+    +LocalDate dateOfBirth
+    +String nationality
+}
+
+class Manager {
+    +Long id
+    +String name
+    +String nationality
+    +LocalDate dateOfBirth
+    +int titlesWon
+}
+
+enum Position {
+    GOALKEEPER
+    DEFENDER
+    MIDFIELDER
+    FORWARD
+}
+
+enum League {
+    PREMIER_LEAGUE
+    LA_LIGA
+    SERIE_A
+    BUNDESLIGA
+    LIGUE_1
+}
+
+Club "1" -- "0.*" Player : has
+Player "*" -- "1" Club : belongs to
+
+Club "1" -- "1" Manager : managed by
+Manager "1" -- "1" Club : manages
+
+Player --> Position
+Club --> League
+
+@enduml

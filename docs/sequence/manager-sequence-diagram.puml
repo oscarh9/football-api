@@ -1,0 +1,21 @@
+@startuml
+actor Client
+participant "ManagerController\n(DTO Layer)" as ManagerController
+participant "ManagerService\n(Business Logic)" as ManagerService
+participant "ManagerRepository\n(Entity Layer)" as ManagerRepository
+database DB
+
+Client -> ManagerController : POST /managers\nmanagerDTO
+note right of ManagerController: Validación automática del DTO\n(@Valid, @NotNull, etc.)
+
+ManagerController -> ManagerService : createManager(managerDTO)
+note right of ManagerService: Aplica lógica de negocio:\n- Mapea DTO -> Entity\n- Verifica club existente\n- Reglas de negocio (ej.: un club solo puede tener 1 manager)
+
+ManagerService -> ManagerRepository : save(manager)
+ManagerRepository -> DB : INSERT INTO manager ...
+DB --> ManagerRepository : OK / generated id
+ManagerRepository --> ManagerService : Manager entity
+
+ManagerService --> ManagerController : ManagerDTO
+ManagerController --> Client : 201 Created\nmanagerDTO
+@enduml

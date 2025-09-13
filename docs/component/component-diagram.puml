@@ -1,0 +1,34 @@
+@startuml
+package "Controller Layer" {
+    component ClubController
+    component PlayerController
+    component ManagerController
+}
+
+package "Service Layer" {
+    component ClubService
+    component PlayerService
+    component ManagerService
+}
+
+package "Repository Layer" {
+    component ClubRepository
+    component PlayerRepository
+    component ManagerRepository
+}
+
+database "PostgreSQL" as DB
+
+ClubController --> ClubService
+PlayerController --> PlayerService
+ManagerController --> ManagerService
+
+ClubService --> ClubRepository
+PlayerService --> PlayerRepository
+ManagerService --> ManagerRepository
+
+ClubRepository --> DB
+PlayerRepository --> DB
+ManagerRepository --> DB
+
+@enduml
