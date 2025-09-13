@@ -1,0 +1,21 @@
+@startuml
+actor Client
+participant "PlayerController\n(DTO Layer)" as PlayerController
+participant "PlayerService\n(Business Logic)" as PlayerService
+participant "PlayerRepository\n(Entity Layer)" as PlayerRepository
+database DB
+
+Client -> PlayerController : POST /players\nplayerDTO
+note right of PlayerController: Validación automática del DTO\n(@Valid, @NotNull, etc.)
+
+PlayerController -> PlayerService : createPlayer(playerDTO)
+note right of PlayerService: Aplica lógica de negocio:\n- Mapea DTO -> Entity\n- Verifica club existente\n- Reglas de negocio (ej.: número de dorsal único)
+
+PlayerService -> PlayerRepository : save(player)
+PlayerRepository -> DB : INSERT INTO player ...
+DB --> PlayerRepository : OK / generated id
+PlayerRepository --> PlayerService : Player entity
+
+PlayerService --> PlayerController : PlayerDTO
+PlayerController --> Client : 201 Created\nplayerDTO
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+actor Client
+participant "ClubController\n(DTO Layer)" as ClubController
+participant "ClubService\n(Business Logic)" as ClubService
+participant "ClubRepository\n(Entity Layer)" as ClubRepository
+database DB
+
+Client -> ClubController : POST /clubs\nclubDTO
+note right of ClubController: Validación automática del DTO\n(@Valid, @NotNull, etc.)
+
+ClubController -> ClubService : createClub(clubDTO)
+note right of ClubService: Aplica lógica de negocio:\n- Mapea DTO -> Entity\n- Reglas de negocio (ej.: nombre único)
+
+ClubService -> ClubRepository : save(club)
+ClubRepository -> DB : INSERT INTO club ...
+DB --> ClubRepository : OK / generated id
+ClubRepository --> ClubService : Club entity
+
+ClubService --> ClubController : ClubDTO
+ClubController --> Client : 201 Created\nclubDTO
+
+@enduml
