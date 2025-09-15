@@ -1,0 +1,38 @@
+package com.oscar.football_api.service.impl;
+
+import com.oscar.football_api.dto.ManagerRequestDTO;
+import com.oscar.football_api.dto.response.ManagerResponseDTO;
+import com.oscar.football_api.entity.Club;
+import com.oscar.football_api.entity.Manager;
+import com.oscar.football_api.mapper.ManagerMapper;
+import com.oscar.football_api.repository.ClubRepository;
+import com.oscar.football_api.repository.ManagerRepository;
+import com.oscar.football_api.service.ManagerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class ManagerServiceImpl implements ManagerService {
+
+    private final ManagerRepository managerRepository;
+    private final ClubRepository clubRepository;
+    private final ManagerMapper managerMapper;
+
+    public ManagerResponseDTO createManager(ManagerRequestDTO requestDTO) {
+        Club club = clubRepository.findById(requestDTO.getClubId())
+                .orElseThrow(() -> new RuntimeException("Club not found."));
+
+        if (club.getManager() != null) {
+            throw new RuntimeException("This club already has a manager assigned.");
+        }
+
+        Manager manager = managerMapper.toEntity(requestDTO);
+        manager.setClub(club);
+
+        Manager saved = managerRepository.save(manager);
+        club.setManager(saved);
+
+        return managerMapper.toDTO(saved);
+    }
+}
