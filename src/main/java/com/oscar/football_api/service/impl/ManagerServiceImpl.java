@@ -51,4 +51,21 @@ public class ManagerServiceImpl implements ManagerService {
                 .orElseThrow(() -> new RuntimeException("Manager not found."));
         return managerMapper.toDTO(manager);
     }
+
+    public ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO) {
+        Manager manager = managerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Manager not found."));
+
+        if (!manager.getClub().getId().equals(requestDTO.getClubId())) {
+            throw new RuntimeException("Cannot change manager's club. Delete and create a new manager instead.");
+        }
+
+        manager.setName(requestDTO.getName());
+        manager.setNationality(requestDTO.getNationality());
+        manager.setDateOfBirth(requestDTO.getDateOfBirth());
+        manager.setTitlesWon(requestDTO.getTitlesWon());
+
+        Manager updated = managerRepository.save(manager);
+        return managerMapper.toDTO(updated);
+    }
 }

@@ -10,4 +10,5 @@ public interface ManagerService {
     ManagerResponseDTO createManager(ManagerRequestDTO requestDTO);
     List<ManagerResponseDTO> getAllManagers();
     ManagerResponseDTO getManagerById(Long id);
+    ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO);
 }
