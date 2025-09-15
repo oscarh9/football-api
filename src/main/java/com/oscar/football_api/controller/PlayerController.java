@@ -8,10 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiConstant.API + ApiConstant.V1 + ApiConstant.PLAYERS)
@@ -23,5 +22,15 @@ public class PlayerController {
     @PostMapping
     public ResponseEntity<PlayerResponseDTO> createPlayer(@Valid @RequestBody PlayerRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(requestDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlayerResponseDTO>> getAllPlayers() {
+        return ResponseEntity.ok(playerService.getAllPlayers());
+    }
+
+    @GetMapping(ApiConstant.ID)
+    public ResponseEntity<PlayerResponseDTO> getPlayerById(@PathVariable Long id) {
+        return ResponseEntity.ok(playerService.getPlayerById(id));
     }
 }
