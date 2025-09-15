@@ -33,6 +33,6 @@ public class Manager {
     private int titlesWon;
 
     @OneToOne
-    @JoinColumn(name = "club_id", nullable = false)
+    @JoinColumn(name = "club_id", unique = true, nullable = false)
     private Club club;
 }
