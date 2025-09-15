@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,5 +16,7 @@ public class ManagerResponseDTO {
     private Long id;
     private String name;
     private String nationality;
+    private LocalDate dateOfBirth;
     private int titlesWon;
+    private Long clubId;
 }
