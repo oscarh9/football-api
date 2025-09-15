@@ -11,6 +11,9 @@ import com.oscar.football_api.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ManagerServiceImpl implements ManagerService {
@@ -34,5 +37,18 @@ public class ManagerServiceImpl implements ManagerService {
         club.setManager(saved);
 
         return managerMapper.toDTO(saved);
+    }
+
+    public List<ManagerResponseDTO> getAllManagers() {
+        return managerRepository.findAll()
+                .stream()
+                .map(managerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ManagerResponseDTO getManagerById(Long id) {
+        Manager manager = managerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Manager not found."));
+        return managerMapper.toDTO(manager);
     }
 }
