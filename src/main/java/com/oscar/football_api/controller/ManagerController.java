@@ -33,4 +33,9 @@ public class ManagerController {
     public ResponseEntity<ManagerResponseDTO> getManagerById(@PathVariable Long id) {
         return ResponseEntity.ok(managerService.getManagerById(id));
     }
+
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<ManagerResponseDTO> updateManager(@PathVariable Long id, @Valid @RequestBody ManagerRequestDTO requestDTO) {
+        return ResponseEntity.ok(managerService.updateManager(id, requestDTO));
+    }
 }
