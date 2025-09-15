@@ -8,6 +8,7 @@ import com.oscar.football_api.mapper.ManagerMapper;
 import com.oscar.football_api.repository.ClubRepository;
 import com.oscar.football_api.repository.ManagerRepository;
 import com.oscar.football_api.service.ManagerService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ManagerServiceImpl implements ManagerService {
 
     private final ManagerRepository managerRepository;
@@ -35,6 +37,7 @@ public class ManagerServiceImpl implements ManagerService {
 
         Manager saved = managerRepository.save(manager);
         club.setManager(saved);
+        clubRepository.save(club);
 
         return managerMapper.toDTO(saved);
     }
@@ -67,5 +70,19 @@ public class ManagerServiceImpl implements ManagerService {
 
         Manager updated = managerRepository.save(manager);
         return managerMapper.toDTO(updated);
+    }
+
+    public void deleteManager(Long id) {
+        Manager manager = managerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Manager not found."));
+
+        Club club = manager.getClub();
+        if (club != null) {
+            club.setManager(null);
+            clubRepository.save(club);
+            manager.setClub(null);
+        }
+
+        managerRepository.delete(manager);
     }
 }

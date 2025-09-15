@@ -11,4 +11,5 @@ public interface ManagerService {
     List<ManagerResponseDTO> getAllManagers();
     ManagerResponseDTO getManagerById(Long id);
     ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO);
+    void deleteManager(Long id);
 }
