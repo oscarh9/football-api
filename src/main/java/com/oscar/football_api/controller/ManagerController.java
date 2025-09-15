@@ -8,10 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiConstant.API + ApiConstant.V1 + ApiConstant.MANAGERS)
@@ -23,5 +22,15 @@ public class ManagerController {
     @PostMapping
     public ResponseEntity<ManagerResponseDTO> createManager(@Valid @RequestBody ManagerRequestDTO requestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(managerService.createManager(requestDTO));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ManagerResponseDTO>> getAllManagers() {
+        return ResponseEntity.ok(managerService.getAllManagers());
+    }
+
+    @GetMapping(ApiConstant.ID)
+    public ResponseEntity<ManagerResponseDTO> getManagerById(@PathVariable Long id) {
+        return ResponseEntity.ok(managerService.getManagerById(id));
     }
 }
