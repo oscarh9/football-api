@@ -53,4 +53,10 @@ public class ClubServiceImpl implements ClubService {
         return clubMapper.toDTO(updated);
     }
 
+    public void deleteClub(Long id) {
+        Club club = clubRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Club not found."));
+        clubRepository.delete(club);
+    }
+
 }

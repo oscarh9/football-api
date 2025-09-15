@@ -11,4 +11,5 @@ public interface ClubService {
     List<ClubResponseDTO> getAllClubs();
     ClubResponseDTO getClubById(Long id);
     ClubResponseDTO updateClub(Long id, ClubRequestDTO requestDTO);
+    void deleteClub(Long id);
 }
