@@ -38,4 +38,19 @@ public class ClubServiceImpl implements ClubService {
         return clubMapper.toDTO(club);
     }
 
+    public ClubResponseDTO updateClub(Long id, ClubRequestDTO requestDTO) {
+        Club club = clubRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Club not found."));
+
+        club.setName(requestDTO.getName());
+        club.setEstablishedDate(requestDTO.getEstablishedDate());
+        club.setStadiumName(requestDTO.getStadiumName());
+        club.setCity(requestDTO.getCity());
+        club.setLeague(requestDTO.getLeague());
+        club.setTitlesWon(requestDTO.getTitlesWon());
+
+        Club updated = clubRepository.save(club);
+        return clubMapper.toDTO(updated);
+    }
+
 }

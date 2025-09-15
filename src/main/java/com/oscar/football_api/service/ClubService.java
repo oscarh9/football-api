@@ -10,4 +10,5 @@ public interface ClubService {
     ClubResponseDTO createClub(ClubRequestDTO requestDTO);
     List<ClubResponseDTO> getAllClubs();
     ClubResponseDTO getClubById(Long id);
+    ClubResponseDTO updateClub(Long id, ClubRequestDTO requestDTO);
 }
