@@ -33,4 +33,9 @@ public class ClubController {
     public ResponseEntity<ClubResponseDTO> getClubById(@PathVariable Long id) {
         return ResponseEntity.ok(clubService.getClubById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClubResponseDTO> updateClub(@PathVariable Long id, @Valid @RequestBody ClubRequestDTO requestDTO) {
+        return ResponseEntity.ok(clubService.updateClub(id, requestDTO));
+    }
 }
