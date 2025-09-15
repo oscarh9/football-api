@@ -29,17 +29,17 @@ public class ClubController {
         return ResponseEntity.ok(clubService.getAllClubs());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ApiConstant.ID)
     public ResponseEntity<ClubResponseDTO> getClubById(@PathVariable Long id) {
         return ResponseEntity.ok(clubService.getClubById(id));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(ApiConstant.ID)
     public ResponseEntity<ClubResponseDTO> updateClub(@PathVariable Long id, @Valid @RequestBody ClubRequestDTO requestDTO) {
         return ResponseEntity.ok(clubService.updateClub(id, requestDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ApiConstant.ID)
     public ResponseEntity<Void> deleteClub(@PathVariable Long id) {
         clubService.deleteClub(id);
         return ResponseEntity.noContent().build();
