@@ -38,4 +38,10 @@ public class ManagerController {
     public ResponseEntity<ManagerResponseDTO> updateManager(@PathVariable Long id, @Valid @RequestBody ManagerRequestDTO requestDTO) {
         return ResponseEntity.ok(managerService.updateManager(id, requestDTO));
     }
+
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<Void> deleteManager(@PathVariable Long id) {
+        managerService.deleteManager(id);
+        return ResponseEntity.noContent().build();
+    }
 }
