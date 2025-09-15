@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +18,7 @@ public class PlayerResponseDTO {
     private String name;
     private Position position;
     private int jerseyNumber;
+    private LocalDate dateOfBirth;
     private String nationality;
+    private Long clubId;
 }
