@@ -38,4 +38,10 @@ public class ClubController {
     public ResponseEntity<ClubResponseDTO> updateClub(@PathVariable Long id, @Valid @RequestBody ClubRequestDTO requestDTO) {
         return ResponseEntity.ok(clubService.updateClub(id, requestDTO));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClub(@PathVariable Long id) {
+        clubService.deleteClub(id);
+        return ResponseEntity.noContent().build();
+    }
 }
