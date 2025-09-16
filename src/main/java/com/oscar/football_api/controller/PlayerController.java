@@ -33,4 +33,9 @@ public class PlayerController {
     public ResponseEntity<PlayerResponseDTO> getPlayerById(@PathVariable Long id) {
         return ResponseEntity.ok(playerService.getPlayerById(id));
     }
+
+    @PutMapping(ApiConstant.ID)
+    public ResponseEntity<PlayerResponseDTO> updatePlayer(@PathVariable Long id, @Valid @RequestBody PlayerRequestDTO requestDTO) {
+        return ResponseEntity.ok(playerService.updatePlayer(id, requestDTO));
+    }
 }
