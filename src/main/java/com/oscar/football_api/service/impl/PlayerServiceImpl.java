@@ -80,4 +80,9 @@ public class PlayerServiceImpl implements PlayerService {
         return playerMapper.toDTO(playerRepository.save(player));
     }
 
+    public void deletePlayer(Long id) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Player not found."));
+        playerRepository.delete(player);
+    }
 }
