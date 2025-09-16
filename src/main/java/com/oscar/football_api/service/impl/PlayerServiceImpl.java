@@ -1,8 +1,10 @@
 package com.oscar.football_api.service.impl;
 
 import com.oscar.football_api.dto.PlayerRequestDTO;
+import com.oscar.football_api.dto.response.ManagerResponseDTO;
 import com.oscar.football_api.dto.response.PlayerResponseDTO;
 import com.oscar.football_api.entity.Club;
+import com.oscar.football_api.entity.Manager;
 import com.oscar.football_api.entity.Player;
 import com.oscar.football_api.mapper.PlayerMapper;
 import com.oscar.football_api.repository.ClubRepository;
@@ -11,6 +13,9 @@ import com.oscar.football_api.service.PlayerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +40,18 @@ public class PlayerServiceImpl implements PlayerService {
 
         Player saved = playerRepository.save(player);
         return playerMapper.toDTO(saved);
+    }
+
+    public List<PlayerResponseDTO> getAllPlayers() {
+        return playerRepository.findAll()
+                .stream()
+                .map(playerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PlayerResponseDTO getPlayerById(Long id) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Player not found."));
+        return playerMapper.toDTO(player);
     }
 }
