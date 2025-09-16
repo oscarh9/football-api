@@ -10,4 +10,5 @@ public interface PlayerService {
     PlayerResponseDTO createPlayer(PlayerRequestDTO requestDTO);
     List<PlayerResponseDTO> getAllPlayers();
     PlayerResponseDTO getPlayerById(Long id);
+    PlayerResponseDTO updatePlayer(Long id, PlayerRequestDTO requestDTO);
 }

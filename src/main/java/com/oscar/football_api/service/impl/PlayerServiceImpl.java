@@ -54,4 +54,30 @@ public class PlayerServiceImpl implements PlayerService {
                 .orElseThrow(() -> new RuntimeException("Player not found."));
         return playerMapper.toDTO(player);
     }
+
+    public PlayerResponseDTO updatePlayer(Long id, PlayerRequestDTO requestDTO) {
+        Player player = playerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Player not found."));
+
+        Club club = clubRepository.findById(requestDTO.getClubId())
+                .orElseThrow(() -> new RuntimeException("Club not found."));
+
+        playerRepository.findByClubIdAndJerseyNumber(club.getId(), requestDTO.getJerseyNumber())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(id)) {
+                        throw new RuntimeException("Jersey number already taken in this club");
+                    }
+                });
+
+
+        player.setName(requestDTO.getName());
+        player.setPosition(requestDTO.getPosition());
+        player.setJerseyNumber(requestDTO.getJerseyNumber());
+        player.setDateOfBirth(requestDTO.getDateOfBirth());
+        player.setNationality(requestDTO.getNationality());
+        player.setClub(club);
+
+        return playerMapper.toDTO(playerRepository.save(player));
+    }
+
 }
