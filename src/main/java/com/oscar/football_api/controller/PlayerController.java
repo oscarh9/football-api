@@ -38,4 +38,10 @@ public class PlayerController {
     public ResponseEntity<PlayerResponseDTO> updatePlayer(@PathVariable Long id, @Valid @RequestBody PlayerRequestDTO requestDTO) {
         return ResponseEntity.ok(playerService.updatePlayer(id, requestDTO));
     }
+
+    @DeleteMapping(ApiConstant.ID)
+    public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
+        playerService.deletePlayer(id);
+        return ResponseEntity.noContent().build();
+    }
 }
