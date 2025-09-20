@@ -33,6 +33,9 @@ The API is fully dockerized and ready for technical testing or local development
   POSTGRES_DB=api_football_db
   POSTGRES_USER=postgres
   POSTGRES_PASSWORD=postgres
+  
+  ADMIN_USERNAME=admin
+  ADMIN_PASSWORD=password
 ````
 
 ### `.env.local` (Local Development)
@@ -42,11 +45,24 @@ The API is fully dockerized and ready for technical testing or local development
   DB_PASSWORD=postgres
   DB_HOST=localhost
   DB_PORT=5432
+  
+  ADMIN_USERNAME=admin
+  ADMIN_PASSWORD=password
 ```
 
 ### `.env.example`
 - Contains placeholders for the variables above, explaining which ones are for Docker and which ones for local development.
 - This file can be committed to the repository so others know which variables to configure.
+
+### Authentication (required for secured endpoints)
+- Both Docker and local development require admin credentials to be set via environment variables:
+
+```bash
+  ADMIN_USERNAME=admin
+  ADMIN_PASSWORD=password
+```
+- These values will be injected into the application at runtime.
+- They are required for performing POST, PUT, or DELETE requests.
 
 ---
 
@@ -83,6 +99,17 @@ The API is fully dockerized and ready for technical testing or local development
 3. Swagger UI: http://localhost:8080/swagger-ui/index.html
 4. PostgreSQL database should match the settings in `.env.local`.
 
+
+### Authentication
+
+- All `GET /api/v1/**` endpoints are public and can be tested without authentication.
+- `POST`, `PUT`, and `DELETE` requests require authentication with the admin credentials.
+
+Default credentials (if configured in `.env`):
+
+- Username: `admin`
+- Password: `password`
+
 ---
 
 ### 4. Important Notes
@@ -91,6 +118,7 @@ The API is fully dockerized and ready for technical testing or local development
 - **Docker Compose:** Starts the API and PostgreSQL; the application waits for the database to be ready before starting.
 - **Data persistence:** No persistent volume in Docker, so each startup runs data.sql to populate the database from scratch.
 - **Best practices:** `.env` and `.env.local` are ignored by Git; `.env.example` serves as a guide for required variables.
+- **Authentication:** Admin credentials are required for modifying resources. Make sure `ADMIN_USERNAME` and `ADMIN_PASSWORD` are configured in `.env` or `.env.local`.
 
 ---
 
@@ -119,6 +147,8 @@ Once the application is running, you can explore and test all endpoints via Swag
     - `/api/clubs` → CRUD operations for clubs
     - `/api/players` → CRUD operations for players
     - `/api/managers` → CRUD operations for managers
+
+> ⚠️ Note: In Swagger UI, click on the **Authorize** button and enter your admin username/password to test secured endpoints (POST, PUT, DELETE).
 
 ---
 
