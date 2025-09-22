@@ -6,14 +6,19 @@ import com.oscar.football_api.dto.response.PlayerResponseDTO;
 import com.oscar.football_api.entity.Club;
 import com.oscar.football_api.entity.Manager;
 import com.oscar.football_api.entity.Player;
+import com.oscar.football_api.entity.enums.Position;
 import com.oscar.football_api.exception.ConflictException;
 import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.PlayerMapper;
 import com.oscar.football_api.repository.ClubRepository;
 import com.oscar.football_api.repository.PlayerRepository;
+import com.oscar.football_api.repository.specifications.PlayerSpecifications;
 import com.oscar.football_api.service.PlayerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,11 +51,9 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerResponseDTO> getAllPlayers() {
-        return playerRepository.findAll()
-                .stream()
-                .map(playerMapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<PlayerResponseDTO> getAllPlayers(Pageable pageable) {
+        return playerRepository.findAll(pageable)
+                .map(playerMapper::toDTO);
     }
 
     @Override
@@ -91,5 +94,14 @@ public class PlayerServiceImpl implements PlayerService {
         Player player = playerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Player with id " + id + " not found"));
         playerRepository.delete(player);
+    }
+
+    public Page<PlayerResponseDTO> searchPlayers(Position position, String name, String nationality, Pageable pageable) {
+        Specification<Player> spec = Specification
+                .where(PlayerSpecifications.hasPosition(position))
+                .and(PlayerSpecifications.hasName(name))
+                .and(PlayerSpecifications.hasNationality(nationality));
+
+        return playerRepository.findAll(spec, pageable).map(playerMapper::toDTO);
     }
 }
