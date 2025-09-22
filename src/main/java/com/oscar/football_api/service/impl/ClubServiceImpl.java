@@ -3,16 +3,18 @@ package com.oscar.football_api.service.impl;
 import com.oscar.football_api.dto.ClubRequestDTO;
 import com.oscar.football_api.dto.response.ClubResponseDTO;
 import com.oscar.football_api.entity.Club;
+import com.oscar.football_api.entity.enums.League;
 import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.ClubMapper;
 import com.oscar.football_api.repository.ClubRepository;
+import com.oscar.football_api.repository.specifications.ClubSpecifications;
 import com.oscar.football_api.service.ClubService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +32,9 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public List<ClubResponseDTO> getAllClubs() {
-        return clubRepository.findAll()
-                .stream()
-                .map(clubMapper::toDTO)
-                .collect(Collectors.toList());
+    public Page<ClubResponseDTO> getAllClubs(Pageable pageable) {
+        return clubRepository.findAll(pageable)
+                .map(clubMapper::toDTO);
     }
 
     @Override
@@ -67,4 +67,14 @@ public class ClubServiceImpl implements ClubService {
         clubRepository.delete(club);
     }
 
+    @Override
+    public Page<ClubResponseDTO> searchClubs(String name, String city, String stadiumName, League league, Pageable pageable) {
+        Specification<Club> spec = Specification
+                .where(ClubSpecifications.hasName(name))
+                .and(ClubSpecifications.hasCity(city))
+                .and(ClubSpecifications.hasStadiumName(stadiumName))
+                .and(ClubSpecifications.hasLeague(league));
+
+        return clubRepository.findAll(spec, pageable).map(clubMapper::toDTO);
+    }
 }
