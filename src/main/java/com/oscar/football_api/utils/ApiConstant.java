@@ -11,5 +11,6 @@ public class ApiConstant {
     public static final String PLAYERS = "/players";
     public static final String MANAGERS = "/managers";
     public static final String ID = "/{id}";
+    public static final String SEARCH = "/search";
 
 }
