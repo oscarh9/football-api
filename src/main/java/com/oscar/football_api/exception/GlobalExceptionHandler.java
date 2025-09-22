@@ -32,7 +32,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
-            HttpMessageNotReadableException.class
+            HttpMessageNotReadableException.class,
+            InvalidSortFieldException.class
     })
     @ResponseBody
     public ErrorMessage badRequest(Exception exception) {
