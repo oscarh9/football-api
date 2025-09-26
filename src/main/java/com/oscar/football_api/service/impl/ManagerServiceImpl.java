@@ -4,21 +4,17 @@ import com.oscar.football_api.dto.ManagerRequestDTO;
 import com.oscar.football_api.dto.response.ManagerResponseDTO;
 import com.oscar.football_api.entity.Club;
 import com.oscar.football_api.entity.Manager;
-import com.oscar.football_api.entity.Player;
 import com.oscar.football_api.exception.ConflictException;
 import com.oscar.football_api.exception.ForbiddenException;
 import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.ManagerMapper;
 import com.oscar.football_api.repository.ClubRepository;
 import com.oscar.football_api.repository.ManagerRepository;
-import com.oscar.football_api.repository.specifications.ManagerSpecifications;
-import com.oscar.football_api.repository.specifications.PlayerSpecifications;
 import com.oscar.football_api.service.ManagerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,11 +93,11 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public Page<ManagerResponseDTO> searchManagers(String name, String nationality, String clubName, Pageable pageable) {
-        Specification<Manager> spec = Specification
-                .where(ManagerSpecifications.hasName(name))
-                .and(ManagerSpecifications.hasNationality(nationality))
-                .and(ManagerSpecifications.hasClubName(clubName));
-
-        return managerRepository.findAll(spec, pageable).map(managerMapper::toDTO);
+        return managerRepository.search(
+                name != null ? name : "",
+                nationality != null ? nationality : "",
+                clubName != null ? clubName : "",
+                pageable
+        ).map(managerMapper::toDTO);
     }
 }
