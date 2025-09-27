@@ -10,13 +10,11 @@ import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.PlayerMapper;
 import com.oscar.football_api.repository.ClubRepository;
 import com.oscar.football_api.repository.PlayerRepository;
-import com.oscar.football_api.repository.specifications.PlayerSpecifications;
 import com.oscar.football_api.service.PlayerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -93,11 +91,11 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Page<PlayerResponseDTO> searchPlayers(Position position, String name, String nationality, Pageable pageable) {
-        Specification<Player> spec = Specification
-                .where(PlayerSpecifications.hasPosition(position))
-                .and(PlayerSpecifications.hasName(name))
-                .and(PlayerSpecifications.hasNationality(nationality));
-
-        return playerRepository.findAll(spec, pageable).map(playerMapper::toDTO);
+        return playerRepository.search(
+                position,
+                name != null ? name : "",
+                nationality != null ? nationality : "",
+                pageable
+        ).map(playerMapper::toDTO);
     }
 }

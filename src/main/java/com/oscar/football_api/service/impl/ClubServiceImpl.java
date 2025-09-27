@@ -7,13 +7,11 @@ import com.oscar.football_api.entity.enums.League;
 import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.ClubMapper;
 import com.oscar.football_api.repository.ClubRepository;
-import com.oscar.football_api.repository.specifications.ClubSpecifications;
 import com.oscar.football_api.service.ClubService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,12 +67,12 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public Page<ClubResponseDTO> searchClubs(String name, String city, String stadiumName, League league, Pageable pageable) {
-        Specification<Club> spec = Specification
-                .where(ClubSpecifications.hasName(name))
-                .and(ClubSpecifications.hasCity(city))
-                .and(ClubSpecifications.hasStadiumName(stadiumName))
-                .and(ClubSpecifications.hasLeague(league));
-
-        return clubRepository.findAll(spec, pageable).map(clubMapper::toDTO);
+        return clubRepository.search(
+                name != null ? name : "",
+                city != null ? city : "",
+                stadiumName != null ? stadiumName : "",
+                league,
+                pageable
+        ).map(clubMapper::toDTO);
     }
 }
