@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ['develop']
+  pull_request:
+    branches: ['develop']
+
+jobs:
+  ci:
+    name: Test, Spotless & SonarCloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Check code formatting with Spotless
+        run: mvn spotless:check
+
+      - name: Unit & Integration Tests
+        run: mvn -B verify
+
+      - name: SonarCloud Analysis
+        run: >
+          mvn -B verify -DskipTests sonar:sonar
+          -Dsonar.projectKey=oscarh9_football-api
+          -Dsonar.organization=oscarh9
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.login=$SONAR_TOKEN
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
