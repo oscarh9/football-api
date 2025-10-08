@@ -10,11 +10,11 @@ import lombok.*;
 @AllArgsConstructor
 public class PlayerSearchDTO {
 
-    private Position position;
-    private String name;
-    private String nationality;
-    private String sortBy = "name";
-    private String sortDir = "asc";
-    private int page = 0;
-    private int size = 10;
+  private Position position;
+  private String name;
+  private String nationality;
+  private String sortBy = "name";
+  private String sortDir = "asc";
+  private int page = 0;
+  private int size = 10;
 }

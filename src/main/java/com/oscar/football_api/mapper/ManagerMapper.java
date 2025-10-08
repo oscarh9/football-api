@@ -9,9 +9,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ManagerMapper {
 
-    @Mapping(source = "clubId", target = "club.id")
-    Manager toEntity(ManagerRequestDTO dto);
+  @Mapping(source = "clubId", target = "club.id")
+  Manager toEntity(ManagerRequestDTO dto);
 
-    @Mapping(source = "club.id", target = "clubId")
-    ManagerResponseDTO toDTO(Manager manager);
+  @Mapping(source = "club.id", target = "clubId")
+  ManagerResponseDTO toDTO(Manager manager);
 }

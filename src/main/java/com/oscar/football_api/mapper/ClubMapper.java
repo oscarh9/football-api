@@ -5,10 +5,12 @@ import com.oscar.football_api.dto.response.ClubResponseDTO;
 import com.oscar.football_api.entity.Club;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {ManagerMapper.class, PlayerMapper.class})
+@Mapper(
+    componentModel = "spring",
+    uses = {ManagerMapper.class, PlayerMapper.class})
 public interface ClubMapper {
 
-    Club toEntity(ClubRequestDTO dto);
+  Club toEntity(ClubRequestDTO dto);
 
-    ClubResponseDTO toDTO(Club club);
+  ClubResponseDTO toDTO(Club club);
 }

@@ -1,12 +1,11 @@
 package com.oscar.football_api.dto.response;
 
 import com.oscar.football_api.entity.enums.Position;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -14,11 +13,11 @@ import java.time.LocalDate;
 @Builder
 public class PlayerResponseDTO {
 
-    private Long id;
-    private String name;
-    private Position position;
-    private int jerseyNumber;
-    private LocalDate dateOfBirth;
-    private String nationality;
-    private Long clubId;
+  private Long id;
+  private String name;
+  private Position position;
+  private int jerseyNumber;
+  private LocalDate dateOfBirth;
+  private String nationality;
+  private Long clubId;
 }

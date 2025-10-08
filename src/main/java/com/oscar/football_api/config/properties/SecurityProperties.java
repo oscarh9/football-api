@@ -7,11 +7,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "security-properties")
 public class SecurityProperties {
 
-    private Admin admin = new Admin();
+  private Admin admin = new Admin();
 
-    @Data
-    public static class Admin {
-        private String username;
-        private String password;
-    }
+  @Data
+  public static class Admin {
+    private String username;
+    private String password;
+  }
 }

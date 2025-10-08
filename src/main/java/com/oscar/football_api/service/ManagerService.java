@@ -7,10 +7,16 @@ import org.springframework.data.domain.Pageable;
 
 public interface ManagerService {
 
-    ManagerResponseDTO createManager(ManagerRequestDTO requestDTO);
-    Page<ManagerResponseDTO> getAllManagers(Pageable pageable);
-    ManagerResponseDTO getManagerById(Long id);
-    ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO);
-    void deleteManager(Long id);
-    Page<ManagerResponseDTO> searchManagers(String name, String nationality, String clubName, Pageable pageable);
+  ManagerResponseDTO createManager(ManagerRequestDTO requestDTO);
+
+  Page<ManagerResponseDTO> getAllManagers(Pageable pageable);
+
+  ManagerResponseDTO getManagerById(Long id);
+
+  ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO);
+
+  void deleteManager(Long id);
+
+  Page<ManagerResponseDTO> searchManagers(
+      String name, String nationality, String clubName, Pageable pageable);
 }

@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClubRepository extends JpaRepository<Club, Long> {
 
-    @Query("""
+  @Query(
+      """
         SELECT c FROM Club c
         WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', COALESCE(:name, ''), '%'))
           AND LOWER(c.city) LIKE LOWER(CONCAT('%', COALESCE(:city, ''), '%'))
@@ -20,11 +21,10 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
           AND (:league IS NULL OR c.league = :league)
         ORDER BY c.name
     """)
-    Page<Club> search(
-            @Param("name") String name,
-            @Param("city") String city,
-            @Param("stadiumName") String stadiumName,
-            @Param("league") League league,
-            Pageable pageable
-    );
+  Page<Club> search(
+      @Param("name") String name,
+      @Param("city") String city,
+      @Param("stadiumName") String stadiumName,
+      @Param("league") League league,
+      Pageable pageable);
 }

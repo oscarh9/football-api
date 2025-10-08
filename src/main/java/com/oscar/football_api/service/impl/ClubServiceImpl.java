@@ -19,60 +19,67 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ClubServiceImpl implements ClubService {
 
-    private final ClubRepository clubRepository;
-    private final ClubMapper clubMapper;
+  private final ClubRepository clubRepository;
+  private final ClubMapper clubMapper;
 
-    @Override
-    public ClubResponseDTO createClub(ClubRequestDTO requestDTO) {
-        Club club = clubMapper.toEntity(requestDTO);
-        Club saved = clubRepository.save(club);
-        return clubMapper.toDTO(saved);
-    }
+  @Override
+  public ClubResponseDTO createClub(ClubRequestDTO requestDTO) {
+    Club club = clubMapper.toEntity(requestDTO);
+    Club saved = clubRepository.save(club);
+    return clubMapper.toDTO(saved);
+  }
 
-    @Override
-    public Page<ClubResponseDTO> getAllClubs(Pageable pageable) {
-        return clubRepository.findAll(pageable)
-                .map(clubMapper::toDTO);
-    }
+  @Override
+  public Page<ClubResponseDTO> getAllClubs(Pageable pageable) {
+    return clubRepository.findAll(pageable).map(clubMapper::toDTO);
+  }
 
-    @Override
-    public ClubResponseDTO getClubById(Long id) {
-        Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
-        return clubMapper.toDTO(club);
-    }
+  @Override
+  public ClubResponseDTO getClubById(Long id) {
+    Club club =
+        clubRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
+    return clubMapper.toDTO(club);
+  }
 
-    @Override
-    public ClubResponseDTO updateClub(Long id, ClubRequestDTO requestDTO) {
-        Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
+  @Override
+  public ClubResponseDTO updateClub(Long id, ClubRequestDTO requestDTO) {
+    Club club =
+        clubRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
 
-        club.setName(requestDTO.getName());
-        club.setEstablishedDate(requestDTO.getEstablishedDate());
-        club.setStadiumName(requestDTO.getStadiumName());
-        club.setCity(requestDTO.getCity());
-        club.setLeague(requestDTO.getLeague());
-        club.setTitlesWon(requestDTO.getTitlesWon());
+    club.setName(requestDTO.getName());
+    club.setEstablishedDate(requestDTO.getEstablishedDate());
+    club.setStadiumName(requestDTO.getStadiumName());
+    club.setCity(requestDTO.getCity());
+    club.setLeague(requestDTO.getLeague());
+    club.setTitlesWon(requestDTO.getTitlesWon());
 
-        Club updated = clubRepository.save(club);
-        return clubMapper.toDTO(updated);
-    }
+    Club updated = clubRepository.save(club);
+    return clubMapper.toDTO(updated);
+  }
 
-    @Override
-    public void deleteClub(Long id) {
-        Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
-        clubRepository.delete(club);
-    }
+  @Override
+  public void deleteClub(Long id) {
+    Club club =
+        clubRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Club with id " + id + " not found"));
+    clubRepository.delete(club);
+  }
 
-    @Override
-    public Page<ClubResponseDTO> searchClubs(String name, String city, String stadiumName, League league, Pageable pageable) {
-        return clubRepository.search(
-                name != null ? name : "",
-                city != null ? city : "",
-                stadiumName != null ? stadiumName : "",
-                league,
-                pageable
-        ).map(clubMapper::toDTO);
-    }
+  @Override
+  public Page<ClubResponseDTO> searchClubs(
+      String name, String city, String stadiumName, League league, Pageable pageable) {
+    return clubRepository
+        .search(
+            name != null ? name : "",
+            city != null ? city : "",
+            stadiumName != null ? stadiumName : "",
+            league,
+            pageable)
+        .map(clubMapper::toDTO);
+  }
 }
