@@ -9,9 +9,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PlayerMapper {
 
-    @Mapping(source = "clubId", target = "club.id")
-    Player toEntity(PlayerRequestDTO dto);
+  @Mapping(source = "clubId", target = "club.id")
+  Player toEntity(PlayerRequestDTO dto);
 
-    @Mapping(source = "club.id", target = "clubId")
-    PlayerResponseDTO toDTO(Player player);
+  @Mapping(source = "club.id", target = "clubId")
+  PlayerResponseDTO toDTO(Player player);
 }

@@ -11,17 +11,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, Long> {
 
-    @Query("""
+  @Query(
+      """
     SELECT m FROM Manager m
     WHERE LOWER(m.name) LIKE LOWER(CONCAT('%', COALESCE(:name, ''), '%'))
       AND LOWER(m.nationality) LIKE LOWER(CONCAT('%', COALESCE(:nationality, ''), '%'))
       AND LOWER(m.club.name) LIKE LOWER(CONCAT('%', COALESCE(:clubName, ''), '%'))
       ORDER BY m.name
     """)
-    Page<Manager> search(
-            @Param("name") String name,
-            @Param("nationality") String nationality,
-            @Param("clubName") String clubName,
-            Pageable pageable
-    );
+  Page<Manager> search(
+      @Param("name") String name,
+      @Param("nationality") String nationality,
+      @Param("clubName") String clubName,
+      Pageable pageable);
 }

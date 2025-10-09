@@ -11,9 +11,9 @@ import com.oscar.football_api.entity.Club;
 import com.oscar.football_api.exception.ResourceNotFoundException;
 import com.oscar.football_api.mapper.ClubMapper;
 import com.oscar.football_api.repository.ClubRepository;
-import java.util.Optional;
-
 import com.oscar.football_api.service.impl.ClubServiceImpl;
+import java.util.Collections;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,74 +23,72 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.Collections;
-
 @ExtendWith(MockitoExtension.class)
 class ClubServiceImplTest {
 
-    @InjectMocks private ClubServiceImpl clubService;
+  @InjectMocks private ClubServiceImpl clubService;
 
-    @Mock private ClubRepository clubRepository;
-    @Mock private ClubMapper clubMapper;
+  @Mock private ClubRepository clubRepository;
+  @Mock private ClubMapper clubMapper;
 
-    @Test
-    void givenClubRequestDTOWhenCreateClubThenReturnClubResponseDTO() {
-        ClubRequestDTO requestDTO = new ClubRequestDTO();
-        requestDTO.setName("Real Madrid");
+  @Test
+  void givenClubRequestDTOWhenCreateClubThenReturnClubResponseDTO() {
+    ClubRequestDTO requestDTO = new ClubRequestDTO();
+    requestDTO.setName("Real Madrid");
 
-        Club club = mock(Club.class);
-        Club saved = mock(Club.class);
-        ClubResponseDTO dto = mock(ClubResponseDTO.class);
+    Club club = mock(Club.class);
+    Club saved = mock(Club.class);
+    ClubResponseDTO dto = mock(ClubResponseDTO.class);
 
-        when(clubMapper.toEntity(requestDTO)).thenReturn(club);
-        when(clubRepository.save(club)).thenReturn(saved);
-        when(clubMapper.toDTO(saved)).thenReturn(dto);
+    when(clubMapper.toEntity(requestDTO)).thenReturn(club);
+    when(clubRepository.save(club)).thenReturn(saved);
+    when(clubMapper.toDTO(saved)).thenReturn(dto);
 
-        ClubResponseDTO result = clubService.createClub(requestDTO);
+    ClubResponseDTO result = clubService.createClub(requestDTO);
 
-        verify(clubRepository, times(1)).save(club);
-        verify(clubMapper, times(1)).toEntity(requestDTO);
-        verify(clubMapper, times(1)).toDTO(saved);
+    verify(clubRepository, times(1)).save(club);
+    verify(clubMapper, times(1)).toEntity(requestDTO);
+    verify(clubMapper, times(1)).toDTO(saved);
 
-        assertThat(result, is(dto));
-    }
+    assertThat(result, is(dto));
+  }
 
-    @Test
-    void givenExistingClubIdWhenGetClubByIdThenReturnDTO() {
-        Long id = 1L;
-        Club club = mock(Club.class);
-        ClubResponseDTO dto = mock(ClubResponseDTO.class);
+  @Test
+  void givenExistingClubIdWhenGetClubByIdThenReturnDTO() {
+    Long id = 1L;
+    Club club = mock(Club.class);
+    ClubResponseDTO dto = mock(ClubResponseDTO.class);
 
-        when(clubRepository.findById(id)).thenReturn(Optional.of(club));
-        when(clubMapper.toDTO(club)).thenReturn(dto);
+    when(clubRepository.findById(id)).thenReturn(Optional.of(club));
+    when(clubMapper.toDTO(club)).thenReturn(dto);
 
-        ClubResponseDTO result = clubService.getClubById(id);
+    ClubResponseDTO result = clubService.getClubById(id);
 
-        verify(clubRepository, times(1)).findById(id);
-        verify(clubMapper, times(1)).toDTO(club);
-        assertThat(result, is(dto));
-    }
+    verify(clubRepository, times(1)).findById(id);
+    verify(clubMapper, times(1)).toDTO(club);
+    assertThat(result, is(dto));
+  }
 
-    @Test
-    void givenNonExistentClubIdWhenGetClubByIdThenThrowResourceNotFoundException() {
-        Long id = 1L;
-        when(clubRepository.findById(id)).thenReturn(Optional.empty());
+  @Test
+  void givenNonExistentClubIdWhenGetClubByIdThenThrowResourceNotFoundException() {
+    Long id = 1L;
+    when(clubRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> clubService.getClubById(id));
-    }
+    assertThrows(ResourceNotFoundException.class, () -> clubService.getClubById(id));
+  }
 
-    @Test
-    void givenPageableWhenGetAllClubsThenReturnPage() {
-        PageRequest pageable = PageRequest.of(0, 10);
-        Club club = mock(Club.class);
-        ClubResponseDTO dto = mock(ClubResponseDTO.class);
-        Page<Club> page = new PageImpl<>(Collections.singletonList(club), pageable, 1);
+  @Test
+  void givenPageableWhenGetAllClubsThenReturnPage() {
+    PageRequest pageable = PageRequest.of(0, 10);
+    Club club = mock(Club.class);
+    ClubResponseDTO dto = mock(ClubResponseDTO.class);
+    Page<Club> page = new PageImpl<>(Collections.singletonList(club), pageable, 1);
 
-        when(clubRepository.findAll(pageable)).thenReturn(page);
-        when(clubMapper.toDTO(club)).thenReturn(dto);
+    when(clubRepository.findAll(pageable)).thenReturn(page);
+    when(clubMapper.toDTO(club)).thenReturn(dto);
 
-        Page<ClubResponseDTO> result = clubService.getAllClubs(pageable);
+    Page<ClubResponseDTO> result = clubService.getAllClubs(pageable);
 
-        assertThat(result.getContent().get(0), is(dto));
-    }
+    assertThat(result.getContent().get(0), is(dto));
+  }
 }

@@ -22,80 +22,103 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class PlayerServiceImpl implements PlayerService {
 
-    private final PlayerRepository playerRepository;
-    private final ClubRepository clubRepository;
-    private final PlayerMapper playerMapper;
+  private final PlayerRepository playerRepository;
+  private final ClubRepository clubRepository;
+  private final PlayerMapper playerMapper;
 
-    @Override
-    public PlayerResponseDTO createPlayer(PlayerRequestDTO requestDTO) {
-        Club club = clubRepository.findById(requestDTO.getClubId())
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + requestDTO.getClubId() + " not found"));
+  @Override
+  public PlayerResponseDTO createPlayer(PlayerRequestDTO requestDTO) {
+    Club club =
+        clubRepository
+            .findById(requestDTO.getClubId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Club with id " + requestDTO.getClubId() + " not found"));
 
-        playerRepository.findByClubIdAndJerseyNumber(club.getId(), requestDTO.getJerseyNumber())
-                .ifPresent(p -> {
-                    throw new ConflictException("Jersey number " + requestDTO.getJerseyNumber() + " is already taken in this club");
-                });
+    playerRepository
+        .findByClubIdAndJerseyNumber(club.getId(), requestDTO.getJerseyNumber())
+        .ifPresent(
+            p -> {
+              throw new ConflictException(
+                  "Jersey number "
+                      + requestDTO.getJerseyNumber()
+                      + " is already taken in this club");
+            });
 
-        Player player = playerMapper.toEntity(requestDTO);
-        player.setClub(club);
+    Player player = playerMapper.toEntity(requestDTO);
+    player.setClub(club);
 
-        Player saved = playerRepository.save(player);
-        return playerMapper.toDTO(saved);
-    }
+    Player saved = playerRepository.save(player);
+    return playerMapper.toDTO(saved);
+  }
 
-    @Override
-    public Page<PlayerResponseDTO> getAllPlayers(Pageable pageable) {
-        return playerRepository.findAll(pageable)
-                .map(playerMapper::toDTO);
-    }
+  @Override
+  public Page<PlayerResponseDTO> getAllPlayers(Pageable pageable) {
+    return playerRepository.findAll(pageable).map(playerMapper::toDTO);
+  }
 
-    @Override
-    public PlayerResponseDTO getPlayerById(Long id) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Player with id " + id + " not found"));
-        return playerMapper.toDTO(player);
-    }
+  @Override
+  public PlayerResponseDTO getPlayerById(Long id) {
+    Player player =
+        playerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Player with id " + id + " not found"));
+    return playerMapper.toDTO(player);
+  }
 
-    @Override
-    public PlayerResponseDTO updatePlayer(Long id, PlayerRequestDTO requestDTO) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Player with id " + id + " not found"));
+  @Override
+  public PlayerResponseDTO updatePlayer(Long id, PlayerRequestDTO requestDTO) {
+    Player player =
+        playerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Player with id " + id + " not found"));
 
-        Club club = clubRepository.findById(requestDTO.getClubId())
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + requestDTO.getClubId() + " not found"));
+    Club club =
+        clubRepository
+            .findById(requestDTO.getClubId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Club with id " + requestDTO.getClubId() + " not found"));
 
-        playerRepository.findByClubIdAndJerseyNumber(club.getId(), requestDTO.getJerseyNumber())
-                .ifPresent(existing -> {
-                    if (!existing.getId().equals(id)) {
-                        throw new ConflictException("Jersey number already taken in this club");
-                    }
-                });
+    playerRepository
+        .findByClubIdAndJerseyNumber(club.getId(), requestDTO.getJerseyNumber())
+        .ifPresent(
+            existing -> {
+              if (!existing.getId().equals(id)) {
+                throw new ConflictException("Jersey number already taken in this club");
+              }
+            });
 
+    player.setName(requestDTO.getName());
+    player.setPosition(requestDTO.getPosition());
+    player.setJerseyNumber(requestDTO.getJerseyNumber());
+    player.setDateOfBirth(requestDTO.getDateOfBirth());
+    player.setNationality(requestDTO.getNationality());
+    player.setClub(club);
 
-        player.setName(requestDTO.getName());
-        player.setPosition(requestDTO.getPosition());
-        player.setJerseyNumber(requestDTO.getJerseyNumber());
-        player.setDateOfBirth(requestDTO.getDateOfBirth());
-        player.setNationality(requestDTO.getNationality());
-        player.setClub(club);
+    return playerMapper.toDTO(playerRepository.save(player));
+  }
 
-        return playerMapper.toDTO(playerRepository.save(player));
-    }
+  @Override
+  public void deletePlayer(Long id) {
+    Player player =
+        playerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Player with id " + id + " not found"));
+    playerRepository.delete(player);
+  }
 
-    @Override
-    public void deletePlayer(Long id) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Player with id " + id + " not found"));
-        playerRepository.delete(player);
-    }
-
-    @Override
-    public Page<PlayerResponseDTO> searchPlayers(Position position, String name, String nationality, Pageable pageable) {
-        return playerRepository.search(
-                position,
-                name != null ? name : "",
-                nationality != null ? nationality : "",
-                pageable
-        ).map(playerMapper::toDTO);
-    }
+  @Override
+  public Page<PlayerResponseDTO> searchPlayers(
+      Position position, String name, String nationality, Pageable pageable) {
+    return playerRepository
+        .search(
+            position, name != null ? name : "", nationality != null ? nationality : "", pageable)
+        .map(playerMapper::toDTO);
+  }
 }

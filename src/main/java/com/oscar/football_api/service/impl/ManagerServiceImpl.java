@@ -22,82 +22,98 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ManagerServiceImpl implements ManagerService {
 
-    private final ManagerRepository managerRepository;
-    private final ClubRepository clubRepository;
-    private final ManagerMapper managerMapper;
+  private final ManagerRepository managerRepository;
+  private final ClubRepository clubRepository;
+  private final ManagerMapper managerMapper;
 
-    @Override
-    public ManagerResponseDTO createManager(ManagerRequestDTO requestDTO) {
-        Club club = clubRepository.findById(requestDTO.getClubId())
-                .orElseThrow(() -> new ResourceNotFoundException("Club with id " + requestDTO.getClubId() + " not found"));
+  @Override
+  public ManagerResponseDTO createManager(ManagerRequestDTO requestDTO) {
+    Club club =
+        clubRepository
+            .findById(requestDTO.getClubId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Club with id " + requestDTO.getClubId() + " not found"));
 
-        if (club.getManager() != null) {
-            throw new ConflictException("This club already has a manager assigned.");
-        }
-
-        Manager manager = managerMapper.toEntity(requestDTO);
-        manager.setClub(club);
-
-        Manager saved = managerRepository.save(manager);
-        club.setManager(saved);
-        clubRepository.save(club);
-
-        return managerMapper.toDTO(saved);
+    if (club.getManager() != null) {
+      throw new ConflictException("This club already has a manager assigned.");
     }
 
-    @Override
-    public Page<ManagerResponseDTO> getAllManagers(Pageable pageable) {
-        return managerRepository.findAll(pageable)
-                .map(managerMapper::toDTO);
+    Manager manager = managerMapper.toEntity(requestDTO);
+    manager.setClub(club);
+
+    Manager saved = managerRepository.save(manager);
+    club.setManager(saved);
+    clubRepository.save(club);
+
+    return managerMapper.toDTO(saved);
+  }
+
+  @Override
+  public Page<ManagerResponseDTO> getAllManagers(Pageable pageable) {
+    return managerRepository.findAll(pageable).map(managerMapper::toDTO);
+  }
+
+  @Override
+  public ManagerResponseDTO getManagerById(Long id) {
+    Manager manager =
+        managerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Manager with id " + id + " not found"));
+    return managerMapper.toDTO(manager);
+  }
+
+  @Override
+  public ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO) {
+    Manager manager =
+        managerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Manager with id " + id + " not found"));
+
+    if (!manager.getClub().getId().equals(requestDTO.getClubId())) {
+      throw new ForbiddenException(
+          "Cannot change manager's club. Delete and create a new manager instead");
     }
 
-    @Override
-    public ManagerResponseDTO getManagerById(Long id) {
-        Manager manager = managerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Manager with id " + id + " not found"));
-        return managerMapper.toDTO(manager);
+    manager.setName(requestDTO.getName());
+    manager.setNationality(requestDTO.getNationality());
+    manager.setDateOfBirth(requestDTO.getDateOfBirth());
+    manager.setTitlesWon(requestDTO.getTitlesWon());
+
+    Manager updated = managerRepository.save(manager);
+    return managerMapper.toDTO(updated);
+  }
+
+  @Override
+  public void deleteManager(Long id) {
+    Manager manager =
+        managerRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Manager with id " + id + " not found"));
+
+    Club club = manager.getClub();
+    if (club != null) {
+      club.setManager(null);
+      clubRepository.save(club);
+      manager.setClub(null);
     }
 
-    @Override
-    public ManagerResponseDTO updateManager(Long id, ManagerRequestDTO requestDTO) {
-        Manager manager = managerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Manager with id " + id + " not found"));
+    managerRepository.delete(manager);
+  }
 
-        if (!manager.getClub().getId().equals(requestDTO.getClubId())) {
-            throw new ForbiddenException("Cannot change manager's club. Delete and create a new manager instead");
-        }
-
-        manager.setName(requestDTO.getName());
-        manager.setNationality(requestDTO.getNationality());
-        manager.setDateOfBirth(requestDTO.getDateOfBirth());
-        manager.setTitlesWon(requestDTO.getTitlesWon());
-
-        Manager updated = managerRepository.save(manager);
-        return managerMapper.toDTO(updated);
-    }
-
-    @Override
-    public void deleteManager(Long id) {
-        Manager manager = managerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Manager with id " + id + " not found"));
-
-        Club club = manager.getClub();
-        if (club != null) {
-            club.setManager(null);
-            clubRepository.save(club);
-            manager.setClub(null);
-        }
-
-        managerRepository.delete(manager);
-    }
-
-    @Override
-    public Page<ManagerResponseDTO> searchManagers(String name, String nationality, String clubName, Pageable pageable) {
-        return managerRepository.search(
-                name != null ? name : "",
-                nationality != null ? nationality : "",
-                clubName != null ? clubName : "",
-                pageable
-        ).map(managerMapper::toDTO);
-    }
+  @Override
+  public Page<ManagerResponseDTO> searchManagers(
+      String name, String nationality, String clubName, Pageable pageable) {
+    return managerRepository
+        .search(
+            name != null ? name : "",
+            nationality != null ? nationality : "",
+            clubName != null ? clubName : "",
+            pageable)
+        .map(managerMapper::toDTO);
+  }
 }

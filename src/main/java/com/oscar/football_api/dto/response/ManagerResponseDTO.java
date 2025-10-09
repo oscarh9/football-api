@@ -1,11 +1,10 @@
 package com.oscar.football_api.dto.response;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -13,10 +12,10 @@ import java.time.LocalDate;
 @Builder
 public class ManagerResponseDTO {
 
-    private Long id;
-    private String name;
-    private String nationality;
-    private LocalDate dateOfBirth;
-    private int titlesWon;
-    private Long clubId;
+  private Long id;
+  private String name;
+  private String nationality;
+  private LocalDate dateOfBirth;
+  private int titlesWon;
+  private Long clubId;
 }

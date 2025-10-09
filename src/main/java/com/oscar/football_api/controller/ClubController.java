@@ -10,6 +10,7 @@ import com.oscar.football_api.utils.ApiConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -21,71 +22,70 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(ApiConstant.API + ApiConstant.V1 + ApiConstant.CLUBS)
 @RequiredArgsConstructor
 @Tag(name = "Clubs", description = "Endpoints for club management")
-
 public class ClubController {
 
-    private final ClubService clubService;
-    private static final List<String> ALLOWED_SORTS = List.of("name","establishedData","stadiumName","city","league","titlesWon");
+  private final ClubService clubService;
+  private static final List<String> ALLOWED_SORTS =
+      List.of("name", "establishedData", "stadiumName", "city", "league", "titlesWon");
 
-    @PostMapping
-    @Operation(summary = "Create a new club")
-    public ResponseEntity<ClubResponseDTO> createClub(@Valid @RequestBody ClubRequestDTO requestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(clubService.createClub(requestDTO));
+  @PostMapping
+  @Operation(summary = "Create a new club")
+  public ResponseEntity<ClubResponseDTO> createClub(@Valid @RequestBody ClubRequestDTO requestDTO) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(clubService.createClub(requestDTO));
+  }
+
+  @GetMapping
+  @Operation(summary = "Get all clubs")
+  public ResponseEntity<PageResponseDTO<ClubResponseDTO>> getALlClubs(
+      @ParameterObject @PageableDefault(page = 0, size = 10, sort = "name") Pageable pageable) {
+    var page = clubService.getAllClubs(pageable);
+    return ResponseEntity.ok(PageResponseDTO.fromPage(page));
+  }
+
+  @GetMapping(ApiConstant.ID)
+  @Operation(summary = "Get one club")
+  public ResponseEntity<ClubResponseDTO> getClubById(@PathVariable Long id) {
+    return ResponseEntity.ok(clubService.getClubById(id));
+  }
+
+  @PutMapping(ApiConstant.ID)
+  @Operation(summary = "Update a club")
+  public ResponseEntity<ClubResponseDTO> updateClub(
+      @PathVariable Long id, @Valid @RequestBody ClubRequestDTO requestDTO) {
+    return ResponseEntity.ok(clubService.updateClub(id, requestDTO));
+  }
+
+  @DeleteMapping(ApiConstant.ID)
+  @Operation(summary = "Delete a club")
+  public ResponseEntity<Void> deleteClub(@PathVariable Long id) {
+    clubService.deleteClub(id);
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping(ApiConstant.SEARCH)
+  @Operation(summary = "Search clubs with filters, pagination and sorting")
+  public ResponseEntity<PageResponseDTO<ClubResponseDTO>> searchClubs(
+      @ParameterObject ClubSearchDTO criteria) {
+
+    if (!ALLOWED_SORTS.contains(criteria.getSortBy())) {
+      throw new InvalidSortFieldException(criteria.getSortBy());
     }
 
-    @GetMapping
-    @Operation(summary = "Get all clubs")
-    public ResponseEntity<PageResponseDTO<ClubResponseDTO>> getALlClubs(
-            @ParameterObject @PageableDefault(page = 0, size = 10, sort = "name")Pageable pageable
-            ) {
-        var page =clubService.getAllClubs(pageable);
-        return ResponseEntity.ok(PageResponseDTO.fromPage(page));
-    }
+    Sort sort = Sort.by(Sort.Direction.fromString(criteria.getSortDir()), criteria.getSortBy());
+    Pageable sortedPageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
-    @GetMapping(ApiConstant.ID)
-    @Operation(summary = "Get one club")
-    public ResponseEntity<ClubResponseDTO> getClubById(@PathVariable Long id) {
-        return ResponseEntity.ok(clubService.getClubById(id));
-    }
+    Page<ClubResponseDTO> page =
+        clubService.searchClubs(
+            criteria.getName(),
+            criteria.getCity(),
+            criteria.getStadiumName(),
+            criteria.getLeague(),
+            sortedPageable);
 
-    @PutMapping(ApiConstant.ID)
-    @Operation(summary = "Update a club")
-    public ResponseEntity<ClubResponseDTO> updateClub(@PathVariable Long id, @Valid @RequestBody ClubRequestDTO requestDTO) {
-        return ResponseEntity.ok(clubService.updateClub(id, requestDTO));
-    }
-
-    @DeleteMapping(ApiConstant.ID)
-    @Operation(summary = "Delete a club")
-    public ResponseEntity<Void> deleteClub(@PathVariable Long id) {
-        clubService.deleteClub(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping(ApiConstant.SEARCH)
-    @Operation(summary = "Search clubs with filters, pagination and sorting")
-    public ResponseEntity<PageResponseDTO<ClubResponseDTO>> searchClubs(@ParameterObject ClubSearchDTO criteria) {
-
-        if (!ALLOWED_SORTS.contains(criteria.getSortBy())) {
-            throw new InvalidSortFieldException(criteria.getSortBy());
-        }
-
-        Sort sort = Sort.by(Sort.Direction.fromString(criteria.getSortDir()), criteria.getSortBy());
-        Pageable sortedPageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
-
-        Page<ClubResponseDTO> page = clubService.searchClubs(
-                criteria.getName(),
-                criteria.getCity(),
-                criteria.getStadiumName(),
-                criteria.getLeague(),
-                sortedPageable
-        );
-
-        return ResponseEntity.ok(PageResponseDTO.fromPage(page));
-    }
+    return ResponseEntity.ok(PageResponseDTO.fromPage(page));
+  }
 }

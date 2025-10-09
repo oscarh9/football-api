@@ -10,12 +10,12 @@ import lombok.*;
 @AllArgsConstructor
 public class ClubSearchDTO {
 
-    private String name;
-    private String city;
-    private String stadiumName;
-    private League league;
-    private String sortBy = "name";
-    private String sortDir = "asc";
-    private int page = 0;
-    private int size = 10;
+  private String name;
+  private String city;
+  private String stadiumName;
+  private League league;
+  private String sortBy = "name";
+  private String sortDir = "asc";
+  private int page = 0;
+  private int size = 10;
 }

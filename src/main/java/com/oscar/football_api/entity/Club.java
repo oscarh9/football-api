@@ -3,10 +3,9 @@ package com.oscar.football_api.entity;
 import com.oscar.football_api.entity.enums.League;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Table(name = "clubs")
@@ -17,35 +16,34 @@ import java.util.List;
 @Builder
 public class Club {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @NotBlank
-    @Size(max = 50)
-    private String name;
+  @NotBlank
+  @Size(max = 50)
+  private String name;
 
-    @PastOrPresent
-    private LocalDate establishedDate;
+  @PastOrPresent private LocalDate establishedDate;
 
-    @NotBlank
-    @Size(max = 50)
-    private String stadiumName;
+  @NotBlank
+  @Size(max = 50)
+  private String stadiumName;
 
-    @NotBlank
-    @Size(max = 50)
-    private String city;
+  @NotBlank
+  @Size(max = 50)
+  private String city;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private League league;
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private League league;
 
-    @Min(0)
-    private int titlesWon;
+  @Min(0)
+  private int titlesWon;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Player> players;
+  @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Player> players;
 
-    @OneToOne(mappedBy = "club", cascade = CascadeType.ALL)
-    private Manager manager;
+  @OneToOne(mappedBy = "club", cascade = CascadeType.ALL)
+  private Manager manager;
 }
